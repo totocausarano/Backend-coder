@@ -1,48 +1,46 @@
 import express from "express";
-import { products } from "./productRouter.js";
+import path from "path";
+import CartManager from "../fileManager/cartManager.js";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 let carts = [];
 let cartid = 1;
 const router = express.Router();
 
+const cartManager = new CartManager(path.join(__dirname, "../../carts.json"));
+
 //Post
 router.post("/", (req, res) => {
-  const newcart = {
-    id: cartid++,
-    cartProduct: [],
-  };
-  carts.push(newcart);
-  res.json("carrito creado exitosamente");
+  const newCart = cartManager.createCart();
+  res.json({ message: "Carrito creado exitosamente", cart: newCart });
 });
 
 router.post("/:cid/products/:pid", (req, res) => {
-  const { cid, pid } = req.params;
-  const product = products.find((product) => product.id === parseInt(pid));
-  const cart = carts.find((cart) => cart.id === parseInt(cid));
-  if (!product) {
-    return res.status(404).json("producto no encontrado");
-  }
-  if (!cart) {
-    return res.status(404).json("carrito no encontrado");
-  }
-  const existingProduct = cart.cartProduct.find(
-    (item) => item.id === product.id
-  );
-  if (existingProduct) {
-    existingProduct.quantity += 1;
+  const cartId = parseInt(req.params.cid);
+  const productId = parseInt(req.params.pid);
+
+  const result = cartManager.addProductToCart(cartId, productId);
+
+  if (result.error) {
+    res.status(404).json(result);
   } else {
-    cart.cartProduct.push({ id: product.id, quantity: 1 });
+    res.json({
+      message: "Producto agregado al carrito exitosamente",
+      cart: result,
+    });
   }
-  res.json("producto agregado al carrito exitosamente");
 });
 
 //Get
 router.get("/:cid", (req, res) => {
-  const { cid } = req.params;
-  const cart = carts.find((cart) => cart.id === parseInt(cid));
+  const cart = cartManager.getCartById(parseInt(req.params.cid));
   if (cart) {
     res.json(cart);
   } else {
-    res.status(404).json("carrito no encontrado");
+    res.status(404).json({ error: "Carrito no encontrado" });
   }
 });
 

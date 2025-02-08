@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "title": "Teclado Mecánico RGB",
+    "description": "Teclado gaming con retroiluminación RGB y switches mecánicos",
+    "price": 75,
+    "thumbnail": "teclado.jpg",
+    "code": "KEY789",
+    "stock": 30
+  },
+  {
+    "id": 2,
+    "title": "Teclado Mecánico RGB",
+    "description": "Teclado gaming con retroiluminación RGB y switches mecánicos",
+    "price": 75,
+    "thumbnail": "teclado.jpg",
+    "code": "KEY789",
+    "stock": 30
+  },
+  {
+    "id": 3,
+    "title": "Teclado Mecánico RGB",
+    "description": "Teclado gaming con retroiluminación RGB y switches mecánicos",
+    "price": 75,
+    "thumbnail": "teclado.jpg",
+    "code": "KEY789",
+    "stock": 30
+  },
+  {
+    "id": 4,
+    "title": "Teclado Mecánico RGB",
+    "description": "Teclado gaming con retroiluminación RGB y switches mecánicos",
+    "price": 75,
+    "thumbnail": "teclado.jpg",
+    "code": "KEY789",
+    "stock": 30
+  },
+  {
+    "id": 5,
+    "title": "Teclado Mecánico RGB",
+    "description": "Teclado gaming con retroiluminación RGB y switches mecánicos",
+    "price": 75,
+    "thumbnail": "teclado.jpg",
+    "code": "KEY789",
+    "stock": 30
+  }
+]

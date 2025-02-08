@@ -1,19 +1,30 @@
 import express from "express";
+import fs from "fs";
+import path from "path";
+import ProductManager from "../fileManager/productManager.js";
+import { fileURLToPath } from "url";
 
-let products = [];
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const router = express.Router();
+const productManager = new ProductManager(
+  path.resolve(__dirname, "../../products.json")
+);
+
 let nextid = 1;
+
 //Get
 router.get("/", (req, res) => {
+  const products = productManager.getAllProducts();
   res.json(products);
 });
 router.get("/:pid", (req, res) => {
-  const { pid } = req.params;
-  const product = products.find((product) => product.id === parseInt(pid));
+  const product = productManager.getProductById(parseInt(req.params.pid));
   if (product) {
     res.json(product);
   } else {
-    res.status(404).json("producto no encontrado");
+    res.status(404).json({ error: "Producto no encontrado" });
   }
 });
 
@@ -23,44 +34,41 @@ router.post("/", (req, res) => {
   if (!title || !description || !price || !thumbnail || !code || !stock) {
     return res.status(400).json({ error: "Todos los campos son obligatorios" });
   }
-  const newProduct = {
-    id: nextid++,
+  const newProduct = productManager.addProduct({
     title,
     description,
     price,
     thumbnail,
     code,
     stock,
-  };
-  products.push(newProduct);
-  res.json("producto agregado exitosamente");
+  });
+  res.json({ message: "Producto agregado exitosamente", product: newProduct });
 });
 //Put
 router.put("/:pid", (req, res) => {
-  const { pid } = req.params;
-  const { title, description, price, thumbnail, code, stock } = req.body;
-  const product = products.find((product) => product.id === parseInt(pid));
-  if (product) {
-    product.title = title;
-    product.description = description;
-    product.price = price;
-    product.thumbnail = thumbnail;
-    product.code = code;
-    product.stock = stock;
-    res.json("producto actualizado exitosamente");
+  const updatedProduct = productManager.updateProduct(
+    parseInt(req.params.pid),
+    req.body
+  );
+  if (updatedProduct) {
+    res.json({
+      message: "Producto actualizado exitosamente",
+      product: updatedProduct,
+    });
   } else {
-    res.status(404).json("producto no encontrado");
+    res.status(404).json({ error: "Producto no encontrado" });
   }
 });
 //Delete
 router.delete("/:pid", (req, res) => {
-  const { pid } = req.params;
-  const product = products.find((product) => product.id === parseInt(pid));
-  products.splice(products[product], 1);
-  res.json("producto eliminado exitosamente");
-  if (!product) {
-    res.status(404).json("producto no encontrado");
+  const deletedProduct = productManager.deleteProduct(parseInt(req.params.pid));
+  if (deletedProduct) {
+    res.json({
+      message: "Producto eliminado exitosamente",
+      product: deletedProduct,
+    });
+  } else {
+    res.status(404).json({ error: "Producto no encontrado" });
   }
 });
 export default router;
-export { products };
