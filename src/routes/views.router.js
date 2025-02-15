@@ -4,7 +4,7 @@ import path from "path";
 
 const router = express.Router();
 const productManager = new ProductManager(
-    path.join(process.cwd(), "products.json")  // Updated path
+    path.join(process.cwd(), "products.json")  
 );
 router.get("/products", async (req, res) => {
   const products = await productManager.getAllProducts();

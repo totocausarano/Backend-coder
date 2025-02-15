@@ -1,4 +1,4 @@
-import fs from "fs/promises"; // Usa fs.promises para funciones asíncronas
+import fs from "fs/promises"; 
 import path from "path";
 
 class ProductManager {
@@ -16,7 +16,7 @@ class ProductManager {
     }
   }
 
-  // Modified getAllProducts to be more robust
+
   async getAllProducts() {
     try {
       const products = await this.loadProducts();

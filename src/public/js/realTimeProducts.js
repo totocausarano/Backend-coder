@@ -4,7 +4,7 @@ const productList = document.getElementById('productList');
 
 console.log('Socket client initialized');
 
-// Form submission handler
+
 productForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const product = {
