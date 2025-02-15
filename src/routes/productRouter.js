@@ -31,9 +31,9 @@ router.get("/:pid", (req, res) => {
 //Post
 router.post("/", (req, res) => {
   const { title, description, price, thumbnail, code, stock } = req.body;
-  if (!title || !description || !price || !thumbnail || !code || !stock) {
-    return res.status(400).json({ error: "Todos los campos son obligatorios" });
-  }
+  //if (!title || !description || !price || !thumbnail || !code || !stock) {
+  //return res.status(400).json({ error: "Todos los campos son obligatorios" });
+  //}
   const newProduct = productManager.addProduct({
     title,
     description,

@@ -1,69 +1,84 @@
-import fs from "fs";
+import fs from "fs/promises"; // Usa fs.promises para funciones asíncronas
 import path from "path";
 
 class ProductManager {
-  constructor(filePath) {
-    this.filePath = filePath;
-    this.products = this.loadProducts();
+  constructor(filePath = "products.json") {
+    this.filePath = path.resolve(filePath);
   }
 
-  loadProducts() {
+  async loadProducts() {
     try {
-      const data = fs.readFileSync(this.filePath, "utf-8");
-      const parsedData = JSON.parse(data);
-      return parsedData;
+      const data = await fs.readFile(this.filePath, "utf-8");
+      return data ? JSON.parse(data) : [];
     } catch (error) {
-      console.error(" Error cargando productos:", error);
+      console.error("Error cargando productos:", error);
       return [];
     }
   }
 
-  saveProducts() {
+  // Modified getAllProducts to be more robust
+  async getAllProducts() {
     try {
-      fs.writeFileSync(this.filePath, JSON.stringify(this.products, null, 2));
+      const products = await this.loadProducts();
+      if (!Array.isArray(products)) {
+        console.error("Products data is not an array");
+        return [];
+      }
+      return products;
     } catch (error) {
-      console.error("Error guardando producto:", error);
+      console.error("Error loading products:", error);
+      return [];
     }
   }
 
-  getAllProducts() {
-    return this.products;
+  async saveProducts(products) {
+    try {
+      await fs.writeFile(this.filePath, JSON.stringify(products, null, 2));
+    } catch (error) {
+      console.error("Error guardando productos:", error);
+    }
   }
 
-  getProductById(id) {
-    return this.products.find((product) => product.id === id);
-  }
+  async addProduct(product) {
+    if (!product.title || !product.description || !product.price || 
+        !product.code || !product.stock) {
+        throw new Error('All fields are required: title, description, price, code, stock');
+    }
 
-  addProduct(product) {
-    const newId =
-      this.products.length > 0
-        ? Math.max(...this.products.map((p) => p.id)) + 1
-        : 1;
-    const newProduct = { id: newId, ...product };
-    this.products.push(newProduct);
-    this.saveProducts();
+    const products = await this.loadProducts();
+    const newId = products.length > 0 ? Math.max(...products.map((p) => p.id)) + 1 : 1;
+    const newProduct = { 
+        id: newId,
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        code: product.code,
+        stock: product.stock
+    };
+    products.push(newProduct);
+    await this.saveProducts(products);
     return newProduct;
+}
+
+  async getProductById(id) {
+    const products = await this.loadProducts();
+    return products.find((product) => product.id === id);
   }
 
-  updateProduct(id, updatedProduct) {
-    const index = this.products.findIndex((product) => product.id === id);
-    if (index !== -1) {
-      this.products[index] = { ...this.products[index], ...updatedProduct };
-      this.saveProducts();
-      return this.products[index];
+async deleteProduct(id) {
+    try {
+        const products = await this.loadProducts();
+        const index = products.findIndex(p => p.id === id);
+        if (index === -1) return false;
+        
+        products.splice(index, 1);
+        await this.saveProducts(products);
+        return true;
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        return false;
     }
-    return null;
-  }
-
-  deleteProduct(id) {
-    const index = this.products.findIndex((product) => product.id === id);
-    if (index !== -1) {
-      const deletedProduct = this.products.splice(index, 1)[0];
-      this.saveProducts();
-      return deletedProduct;
-    }
-    return null;
-  }
+}
 }
 
 export default ProductManager;

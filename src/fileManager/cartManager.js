@@ -10,9 +10,9 @@ class CartManager {
   loadCarts() {
     try {
       const data = fs.readFileSync(this.filePath, "utf-8");
-      return JSON.parse(data);
+      return data.trim() ? JSON.parse(data) : []; // ✅ Si está vacío, devuelve []
     } catch (error) {
-      console.error("Error cargando carrito:", error);
+      console.error("Error cargando carritos:", error);
       return [];
     }
   }
@@ -25,7 +25,7 @@ class CartManager {
     }
   }
 
-  getAllCarts() {
+  async getAllCarts() {
     return this.carts;
   }
 
