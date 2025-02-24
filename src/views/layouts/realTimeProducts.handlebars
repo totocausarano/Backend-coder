@@ -1,12 +1,71 @@
 <div>
-  <input type="text" id="title" placeholder="Titulo" />
-  <input type="text" id="description" placeholder="Descripcion" />
-  <input type="number" id="price" placeholder="Precio" />
-  <input type="number" id="code" placeholder="Codigo" />
-  <input type="number" id="stock" placeholder="Stock" />
-  <button id="sendProduct">Enviar</button>
-  <h1>Todos los productos</h1>
-  <div id="productsContainer"></div>
+    <form id="productForm">
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" placeholder="Nombre" required />
+        
+        <label for="description">Descripción:</label>
+        <input type="text" id="description" placeholder="Descripción" required />
+        
+        <label for="price">Precio:</label>
+        <input type="number" id="price" placeholder="Precio" required min="0" />
+        
+        <label for="code">Código:</label>
+        <input type="text" id="code" placeholder="Código" required />
+        
+        <label for="stock">Stock:</label>
+        <input type="number" id="stock" placeholder="Stock" required min="0" />
+        
+        <button type="submit" id="sendProduct">Enviar</button>
+    </form>
+    
+    <h2>Lista de Productos</h2>
+    <ul id="productsContainer"></ul>
 </div>
+
 <script src="/socket.io/socket.io.js"></script>
-<script src="/js/index.js"></script>
+<script>
+    const socket = io();
+    const productForm = document.getElementById('productForm');
+    const productContainer = document.getElementById('productsContainer');
+
+    productForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const product = {
+            name: document.getElementById('name').value,
+            description: document.getElementById('description').value,
+            price: parseFloat(document.getElementById('price').value),
+            code: document.getElementById('code').value,
+            stock: parseInt(document.getElementById('stock').value)
+        };
+        
+        if (!product.name || !product.description || isNaN(product.price) || !product.code || isNaN(product.stock)) {
+            alert("Todos los campos son obligatorios y deben tener valores válidos.");
+            return;
+        }
+        
+        socket.emit('addProduct', product);
+        productForm.reset();
+    });
+
+    socket.on('updateProducts', (products) => {
+        if (Array.isArray(products)) {
+            const html = products.map(product => `
+                <li>
+                    <strong>${product.name}</strong> - ${product.description}
+                    <p>Precio: $${product.price} | Código: ${product.code} | Stock: ${product.stock}</p>
+                    <button onclick="deleteProduct('${product.id}')">Eliminar</button>
+                </li>
+            `).join('');
+            productContainer.innerHTML = html;
+        } else {
+            console.error('Products is not an array:', products);
+        }
+    });
+    
+    function deleteProduct(id) {
+        if (confirm("¿Seguro que deseas eliminar este producto?")) {
+            socket.emit('deleteProduct', id);
+        }
+    }
+</script>
