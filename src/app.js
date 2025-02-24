@@ -7,9 +7,22 @@ import productRouter from "./routes/productRouter.js";
 import cartRouter from "./routes/cartRouter.js";
 import ProductManager from "./fileManager/productManager.js"; 
 import path from 'path';
+import mongoose from "mongoose";
+import dotenv from "dotenv";
 
+
+dotenv.config();
 const app = express();
 const productManager = new ProductManager(path.join(process.cwd(), "products.json")); 
+
+const URIMongoDB = process.env.URIMONGO;
+
+mongoose.connect (URIMongoDB)
+.then(() => console.log("conectado a la base de datos"))
+.catch((error) => console.log(error));
+
+
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
