@@ -20,7 +20,6 @@
 
 <script>
     async function addToCart(productId) {
-        // 🚨 IMPORTANTE: Debes reemplazar esto con el ID real del carrito si lo tienes
         const cartId = "67bcb5aa546c6562dfc9e3a1"; 
 
         try {
@@ -33,9 +32,9 @@
 
             const data = await response.json();
             if (response.ok) {
-                alert("✅ Producto agregado al carrito");
+                alert(" Producto agregado al carrito");
             } else {
-                alert("❌ Error: " + data.message);
+                alert(" Error: " + data.message);
             }
         } catch (error) {
             console.error("Error agregando al carrito:", error);

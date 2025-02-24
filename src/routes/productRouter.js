@@ -1,11 +1,9 @@
 import express from "express";
-import ProductModel from "../models/productModel.js"; // Importamos el modelo de productos
+import ProductModel from "../models/productModel.js"; 
 
 const router = express.Router();
 
-/** 
- * 📌 GET /api/products → Obtener todos los productos con paginación, filtros y ordenamiento 
- */
+
 router.get("/", async (req, res) => {
     try {
         let { limit = 10, page = 1, sort, query } = req.query;
@@ -42,9 +40,7 @@ router.get("/", async (req, res) => {
     }
 });
 
-/** 
- * 📌 POST /api/products → Agregar un nuevo producto 
- */
+
 router.post("/", async (req, res) => {
     try {
         const { name, description, price, code, stock, category } = req.body;
@@ -62,9 +58,7 @@ router.post("/", async (req, res) => {
     }
 });
 
-/** 
- * 📌 PUT /api/products/:id → Actualizar un producto por ID 
- */
+
 router.put("/:id", async (req, res) => {
     try {
         const { id } = req.params;
@@ -86,9 +80,7 @@ router.put("/:id", async (req, res) => {
     }
 });
 
-/** 
- * 📌 DELETE /api/products/:id → Eliminar un producto por ID 
- */
+
 router.delete("/:id", async (req, res) => {
     try {
         const { id } = req.params;

@@ -1,10 +1,9 @@
 import express from 'express';
-import ProductModel from '../models/productModel.js';  // Fixed typo in import
+import ProductModel from '../models/productModel.js';  
 import CartModel from '../models/cartModel.js';
 
 const router = express.Router();
 
-// Vista de productos con paginación
 router.get('/products', async (req, res) => {
     try {
         let { limit = 10, page = 1, sort, query } = req.query;
@@ -23,7 +22,7 @@ router.get('/products', async (req, res) => {
         const products = await ProductModel.find(filter)
             .sort(sortOption)
             .limit(limit)
-            .skip((page - 1) * limit)    // Removed extra semicolon
+            .skip((page - 1) * limit)   
             .lean();
             
         res.render('index', { products, totalPages, page });
@@ -32,7 +31,6 @@ router.get('/products', async (req, res) => {
     }
 });
 
-// Vista de producto individual
 router.get('/products/:pid', async (req, res) => {
     try {
         const { pid } = req.params;
@@ -45,7 +43,7 @@ router.get('/products/:pid', async (req, res) => {
     }
 });
 
-// Vista de carrito específico
+
 router.get("/carts/:cid", async (req, res) => {
   try {
       const { cid } = req.params;

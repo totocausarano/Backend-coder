@@ -8,7 +8,7 @@ import cartRouter from "./routes/cartRouter.js";
 import path from 'path';
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import ProductModel from "./models/productModel.js"; // Importamos MongoDB ProductModel
+import ProductModel from "./models/productModel.js"; 
 
 dotenv.config();
 const app = express();
@@ -16,14 +16,14 @@ const app = express();
 const URIMongoDB = process.env.URIMONGO;
 
 mongoose.connect(URIMongoDB)
-    .then(() => console.log("✅ Conectado a MongoDB"))
-    .catch((error) => console.log("❌ Error en la conexión a MongoDB:", error));
+    .then(() => console.log("Conectado a MongoDB"))
+    .catch((error) => console.log(" Error en la conexión a MongoDB:", error));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const httpServer = app.listen(8080, () => {
-    console.log("🚀 Servidor corriendo en el puerto 8080");
+    console.log(" Servidor corriendo en el puerto 8080");
 });
 
 const io = new Server(httpServer);
@@ -43,7 +43,7 @@ app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
 
 io.on('connection', async (socket) => {
-    console.log('🟢 Nuevo cliente conectado');
+    console.log('Nuevo cliente conectado');
 
     // Enviar productos iniciales desde MongoDB
     const products = await ProductModel.find();
@@ -56,7 +56,7 @@ io.on('connection', async (socket) => {
             const updatedProducts = await ProductModel.find();
             io.emit('updateProducts', updatedProducts);
         } catch (error) {
-            console.error('❌ Error agregando producto:', error);
+            console.error('Error agregando producto:', error);
         }
     });
 
@@ -67,7 +67,7 @@ io.on('connection', async (socket) => {
             const updatedProducts = await ProductModel.find();
             io.emit('updateProducts', updatedProducts);
         } catch (error) {
-            console.error('❌ Error eliminando producto:', error);
+            console.error(' Error eliminando producto:', error);
         }
     });
 });

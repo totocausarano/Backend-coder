@@ -9,7 +9,7 @@ const cartSchema = new mongoose.Schema({
     ]
 });
 
-// Crear el modelo de carrito
+
 const Cart = mongoose.model("Cart", cartSchema);
 
 export default Cart;
